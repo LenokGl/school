@@ -8,89 +8,94 @@
 ```plantuml
 @startuml
 ' Логическая модель данных в варианте UML Class Diagram (альтернатива ER-диаграмме).
-namespace ShoppingCart {
+namespace User {
 
- class ShoppingCart
+ class User
  {
   id : string
   createDate : datetime
   updateDate : datetime
-  customer : Customer
-  price : ShoppingCartPrice
+  UserName : string
+  UserType : UserType
   cartItems : CartItem[]
  }
 
- class ShoppingCartPrice
+ enum UserType
  {
-  type : CartItemPrice
+  UserType
  }
- class CartItemPrice
- {
-  type : CartItemPriceType
- }
-
- enum CartPriceType
- {
-  total
-  grandTotal
-  offeringDiscount
-  couponsDiscount
- }
-
- class CartItem
- {
-  id : string
-  quantity : int
-  offering : Offering
-  relationship : CartItemRelationShip[]
-  price : CartItemPrice[]
-  status : CartItemStatus
- }
-
-  class Customer
+ 
+ class Speaker
  {
   id : string
  }
  
- class Offering
+   class Admin
  {
   id : string
-  isQuantifiable : boolean
-  actionType : OfferingActionType
-  validFor : ValidFor
  }
   
- class ProductSpecificationRef
+    class Support
  {
   id : string
+ } 
+  
+ User --  UserType
+ User.Speaker -- Schedule.TimeSlot 
+ User.Admin -- Schedule.Schedule
+ User *-- "1" Speaker
+ User *-- "1" Admin
+ User *-- "1" Support
+}
+
+namespace Schedule {
+class Schedule
+ {
+  id : string
+  Task : Task
  }
  
- ShoppingCart *-- "1..*" ShoppingCartPrice
- ShoppingCartPrice -- CartPriceType
- ShoppingCart *-- "*" CartItem
- CartItem *-- "*" CartItemPrice
- CartItemPrice -- CartPriceType
- CartItem *-- "1" Offering
- Offering *-- "1" ProductSpecificationRef
- Offering *-- "0..1" ProductConfiguration
- ShoppingCart *-- "1" Customer
+ class Task
+ {
+ id : string
+ TaskNAme:TaskEnum
+ }
+ 
+ class StateModel
+  {
+  id : string
+  
+  }
+  
+   enum StateModelkEnum
+ {
+  Name
+ }
+  enum TaskEnum
+ {
+  Name
+ }
+ 
+  class TimeSlot
+ {
+ id : string
+ }
+ 
+ Schedule -- Task
+ Task -- TaskEnum
+ Task -- TimeSlot
+ Schedule -- StateModel
+ StateModel -- StateModelkEnum
 }
 
-namespace Ordering {
- ProductOrder *-- OrderItem
- OrderItem *-- Product
- Product *-- ProductSpecificationRef
- ProductOrder *-- Party
+namespace Message {
+ User.User ..> Message : ref
+ Schedule.Schedule ..> Message : ref
 }
 
-namespace ProductCatalog {
- ShoppingCart.ProductSpecificationRef ..> ProductSpecification : ref
- Ordering.ProductSpecificationRef ..> ProductSpecification : ref
-}
-
-namespace CX {
- ShoppingCart.Customer ..> Customer : ref
- Ordering.Party ..> Customer : ref
+namespace Translation {
+ User.User ..> Translation : ref
+ Schedule.Schedule ..> Translation : ref
 }
 @enduml
 ```
