@@ -60,5 +60,4 @@ SHOW_LEGEND()
 | message_bus | Шина сообщений|
 | presentation_db | База презентаций|
 | user_db | База участников|
-| user_db | База участников|
 | e_mail_system|Сервис рассылки уведомлений|
