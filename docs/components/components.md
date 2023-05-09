@@ -27,7 +27,7 @@ System_Boundary(c, "Портал конференции") {
    Container(audit_store, "Audit Store", "Event Store", "Хранение произошедших события для аудита", $tags = "storage")
 }
 
-System_Ext(e_mail_system, "Mail.ru", "Система рассылки уведомлений.")  
+System_Ext(e_mail_system, "Mail.ru", "Сервис рассылки уведомлений.")  
 
 Lay_R(autorization_service, presentation_service)
 Lay_R(autorization_service, e_mail_system)
@@ -55,4 +55,10 @@ SHOW_LEGEND()
 ## Список компонентов
 | Компонент             | Роль/назначение                  |
 |:----------------------|:---------------------------------|
-| *Название компонента* | *Описание назначения компонента* |
+| autorization_service | Сервис авторизации пользователя|
+| presentation_service | Сервис презентаций|
+| message_bus | Шина сообщений|
+| presentation_db | База презентаций|
+| user_db | База участников|
+| user_db | База участников|
+| e_mail_system|Сервис рассылки уведомлений|
