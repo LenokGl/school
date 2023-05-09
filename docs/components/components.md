@@ -12,39 +12,41 @@
 AddElementTag("microService", $shape=EightSidedShape(), $bgColor="CornflowerBlue", $fontColor="white", $legendText="microservice")
 AddElementTag("storage", $shape=RoundedBoxShape(), $bgColor="lightSkyBlue", $fontColor="white")
 
-Person(customer, "Покупатель", "B2C клиент")
+Person(customer, "Пользователь", "Лицо желающее принять участие в конференции")
 
-System_Boundary(c, "MTS Shop Lite") {
-   Container(app, "Клиентское веб-приложение", "html, JavaScript, Angular", "Портал интернет-магазина")
-   Container(offering_service, "Product Offering Service", "Java, Spring Boot", "Сервис управления продуктовым предложением", $tags = "microService")      
-   ContainerDb(offering_db, "Product Catalog", "PostgreSQL", "Хранение продуктовых предложений", $tags = "storage")
+System_Boundary(c, "Портал конференции") {
+   Container(app, "Клиентское веб-приложение", "html, JavaScript, Angular", "Портал конференции")
+   Container(autorization_service, "Авторизация пользователя", "Java", "Сервис авторизации пользователя", $tags = "microService")      
+   ContainerDb(user_db, "User Catalog", "MySQL", "Хранение информации о пользователе", $tags = "storage")
    
-   Container(ordering_service, "Product Ordering Service", "Golang, nginx", "Сервис управления заказом", $tags = "microService")      
-   ContainerDb(ordering_db, "Order Inventory", "MySQL", "Хранение заказов", $tags = "storage")
+   Container(presentation_service, "Презентации", "Golang, nginx", "Сервис загрузки презентаций", $tags = "microService")      
+   ContainerDb(presentation_db, "Presentation Catalog", "MySQL", "Хранение презентаций", $tags = "storage")
     
    Container(message_bus, "Message Bus", "RabbitMQ", "Транспорт для бизнес-событий")
    Container(audit_service, "Audit Service", "C#/.NET", "Сервис аудита", $tags = "microService")      
    Container(audit_store, "Audit Store", "Event Store", "Хранение произошедших события для аудита", $tags = "storage")
 }
 
-System_Ext(logistics_system, "msLogistix", "Система управления доставкой товаров.")  
+System_Ext(e_mail_system, "Mail.ru", "Система рассылки уведомлений.")  
 
-Lay_R(offering_service, ordering_service)
-Lay_R(offering_service, logistics_system)
-Lay_D(offering_service, audit_service)
+Lay_R(autorization_service, presentation_service)
+Lay_R(autorization_service, e_mail_system)
+Lay_D(autorization_service, audit_service)
 
-Rel(customer, app, "Оформление заказа", "HTTPS")
-Rel(app, offering_service, "Выбор продуктов для корзины(Продукт):корзина", "JSON, HTTPS")
+Rel(customer, app, "Портал конференции", "HTTPS")
+Rel(app, autorization_service, "Авторизация пользователя", "JSON, HTTPS")
 
-Rel(offering_service, message_bus, "Отправка заказа(Корзина)", "AMPQ")
-Rel(offering_service, offering_db, "Сохранение продуктового предложения(Продуктовая спецификация)", "JDBC, SQL")
+Rel(message_bus, presentation_service, "Загрузка презентации", "AMPQ")
+Rel(autorization_service, user_db, "Сохранение информации о пользователе", "JDBC, SQL")
 
-Rel(ordering_service, message_bus, "Получение заказа: Корзина", "AMPQ")
+Rel(autorization_service, message_bus, "Пользователь зарегистрирован как докладчик", "AMPQ")
 Rel_U(audit_service, message_bus, "Получение события аудита(Событие)", "AMPQ")
 
-Rel(ordering_service, ordering_db, "Сохранение заказа(Заказ)", "SQL")
+Rel(presentation_service, presentation_db, "Сохранение презентации", "SQL")
 Rel(audit_service, audit_store, "Сохранение события(Событие)")
-Rel(ordering_service, logistics_system, "Доставка(Наряд на доставку):Трекинг", "JSON, HTTP")  
+
+Rel(presentation_service, e_mail_system, "Рассылка уведомлений", "SMTP")
+Rel(autorization_service, e_mail_system, "Рассылка уведомлений", "SMTP")  
 
 SHOW_LEGEND()
 @enduml
